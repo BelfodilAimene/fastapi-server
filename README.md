@@ -1,61 +1,75 @@
-# A simple template for pyenv, poetry and docker fast api server
+# A Simple Template for pyenv, Poetry, and Docker FastAPI Server
+## 1 - Install pyenv to Manage Various Python Versions
+First, install pyenv by following the instructions at: https://github.com/pyenv/pyenv#1-automatic-installer-recommended
 
-## 1 - Install pyenv to manage various python versions:
-First install pyenv following
-https://github.com/pyenv/pyenv?tab=readme-ov-file#1-automatic-installer-recommended
+### Install a Python Version Using pyenv
+To install Python version 3.11.6, run:
 
-### Install python version using pyenv
-
-Install python version 3.11.6.
 ```bash
 pyenv install 3.11.6
 ```
 
-### Use python 3.11.6 in your current project
-Use python 3.11.6 for your project
+### Use Python 3.11.6 in Your Current Project
+To use Python 3.11.6 for your project:
+
 ```bash
 pyenv local 3.11.6
 ```
 
-This will create file `.python-version` containing `3.11.6` that `pyenv` will use to configure the version of python to use in the current directory. You can notice that the following command:
+This will create a `.python-version` file containing `3.11.6` which pyenv will use to configure the Python version for the current directory. You can verify this by running:
+
 ```bash
 pyenv which python
 ```
 
-will output
+This should output:
+
 ```bash
 /home/user/.pyenv/versions/3.11.6/bin/python
 ```
 
-whilst my system python version may be different for instance, in my: laptop
+Note that your system Python version may be different. For example, on my laptop:
+
 ```bash
 python3 --version
 ```
-outputs
+
+outputs:
+
 ```bash
 Python 3.12.3
 ```
 
-You may check your system python version using command `which`: 
+You can check your system's Python path with the following command:
+
 ```bash
 which python3
 ```
 
-outputs for me a different path
+
+
+This output a different path, like:
+
 ```bash
 /usr/bin/python3
 ```
 
-## 2 - Install poetry as your dependency manager:
-First install poetry following
-https://python-poetry.org/docs/#installing-with-the-official-installer
+## 2 - Install Poetry as Your Dependency Manager
+First, install Poetry by following the instructions at: https://python-poetry.org/docs/#installing-with-the-official-installer
 
-### First initialize your project
-Run `poetry init`
+### Initialize Your Project
+Run the following command to initialize your project:
 
 ```bash
-This command will guide you through creating your pyproject.toml config.
+poetry init
+```
 
+
+This command will guide you through creating the `pyproject.toml` configuration.
+
+Example output:
+
+```bash
 Package name [fastapi-template-project]:       
 Version [0.1.0]:  
 Description []:  
@@ -88,24 +102,25 @@ build-backend = "poetry.core.masonry.api"
 Do you confirm generation? (yes/no) [yes] yes
 ```
 
-The previous command generate `pyproject.tom` that will list the list of your `dependencies`.
+The previous command generate [pyproject.tom](pyproject.tom) that will list the list of your `dependencies`.
 
-
-### Next tell poetry that you want to use pyenv as 
+### Next tell poetry that you want to use pyenv python 
 
 ```bash
 poetry env use $(pyenv which python)
 ```
 
-This command will create `virtualenv` where all dependencies will no longer be installed in your system but only in the directory `.venv`.
+This will create a virtual environment where all dependencies will be installed in the .venv directory, rather than on the system Python installation.
 
-### Next add fastapi dependencies
+### Add FastAPI Dependencies
+To add FastAPI as a dependency, run:
 
 ```bash
 poetry add fastapi
 ```
 
-This will output
+This will output:
+
 ```bash
 Using version ^0.115.8 for fastapi
 
@@ -127,34 +142,39 @@ Package operations: 9 installs, 0 updates, 0 removals
 Writing lock file
 ```
 
-It is worth to notice that `pyproject.toml` will be updated by adding in the list of your dependencies `fastapi (>=0.115.8,<0.116.0)` that indicates that your project will be compatible with any version between  `0.115.8` and `<0.116.0`.
+Note that `pyproject.toml` will be updated to reflect the new dependency:
 
-Please notice also that a `poetry.lock` will be generated containing the exact version of all the install dependencies. For instance in this project the fastapi version installed is `0.115.8`.
-
-Remember:
-
-1 - `pyproject.toml` holds the list of your `requirements` and may cover many supported versions.
-
-2 - `poetry.lock` holds the exact version installed and used currently by the project.
-
-### Add uvicorn following the previous commands
-
+```toml
+dependencies = [
+    {name = "fastapi", version = "^0.115.8"}
+]
 ```
+
+The [`poetry.lock`](poetry.lock) file will also be generated, containing the exact version of all installed dependencies (e.g., fastapi==0.115.8).
+
+Important:
+
+1 - pyproject.toml lists your project’s requirements and may specify version ranges.
+2 - poetry.lock contains the exact versions of the dependencies installed in your project.
+
+
+### Add Uvicorn
+
+To add Uvicorn (the ASGI server for FastAPI), run:
+
+```bash
 poetry add uvicorn
 ```
 
-## 3 - Create your fastapi project
-
-
-### Create main.py with a simple server
-Create your `main.py` containing the following lines:
+## 3 - Create Your FastAPI Project
+Create `main.py` with a Simple Server
+Create a main.py file with the following content:
 
 ```python
 from fastapi import FastAPI
 import uvicorn
 
 app = FastAPI()
-
 
 @app.get("/")
 def read_root():
@@ -172,45 +192,41 @@ if __name__ == "__main__":
                 log_level="debug")
 ```
 
-### Run your project
+### Run Your Project
+To run your project, use Poetry:
 
-Run always using poetry
-```bash
+``` bash
 poetry run python3 main.py
 ```
 
-This will run your fastapi server a `REST API server`.
+This will start your FastAPI server, and you'll have a running REST API server.
 
+## 4 - Dockerize Your Project
+### Install Docker
+Follow the instructions to install Docker for Ubuntu: https://docs.docker.com/engine/install/ubuntu/
 
-## 4 - Dockerize your project
+### Configure Docker Group to Avoid Using sudo Every Time
+Follow the post-installation steps for Docker: https://docs.docker.com/engine/install/linux-postinstall/
 
-### Install docker
-Install docker using https://docs.docker.com/engine/install/ubuntu/
+### Create Your Docker Image
+Create Dockerfile [Dockerfile](Dockerfile). The Dockerfile will use a multi-stage build: the first stage will install Poetry and generate the list of dependencies, while the second stage will build a smaller image without Poetry.
 
-### Configure docker group to avoid always using sudo
-Follow https://docs.docker.com/engine/install/linux-postinstall/
+### Build Your Docker Image
+To build the Docker image, run:
 
-### Create your docker image
-Create Dockerfile [Dockerfile](Dockerfile).
-
-You may notice that we are using here two-stage building where the first `FROM` introduce the builder image that use poetry to generate the list of your requirements. The second `FROM` produce the final image which is lighter since it does not contain poetry.
-
-This technique is called `multi-stage builds` (See https://docs.docker.com/get-started/docker-concepts/building-images/multi-stage-builds/ for more details) and is a best practice in Docker when buidling images. 
-
-Remember, the smaller the image the better is.
-
-### Build your image
 ```bash
 docker build . -t cute-server:1.0.0-alpha
 ```
 
-### Add a simple docker compose
-Create a docker compose file [`docker-compose.yaml`](./docker-compose.yaml) that run your image and expose its port to 8000.
+### Add a Simple Docker Compose File
+Create a [`docker-compose.yaml`](./docker-compose.yaml) file to define the service and expose port 8000.
 
-### Run your docker compose
+Run Your Docker Compose
+To start the server with Docker Compose, run:
+
 ```bash
 docker compose up
 ```
 
-### Enjoy your server using its doc
-Go to [localhost:8000/docs](http://localhost:8000/docs).
+### Access the Server Documentation
+Once the server is running, you can access the API documentation at: http://localhost:8000/docs.
