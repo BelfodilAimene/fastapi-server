@@ -211,6 +211,8 @@ Follow the post-installation steps for Docker: https://docs.docker.com/engine/in
 ### Create Your Docker Image
 Create Dockerfile [Dockerfile](Dockerfile). The Dockerfile will use a multi-stage build: the first stage will install Poetry and generate the list of dependencies, while the second stage will build a smaller image without Poetry.
 
+You can notice also that the Dockerfile does not use `pyenv` as the python version is already fixed using `FROM python:3.11.6-slim-bookworm`. 
+
 ### Build Your Docker Image
 To build the Docker image, run:
 
