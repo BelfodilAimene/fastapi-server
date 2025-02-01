@@ -1,4 +1,4 @@
-# Configure your environment
+# Creating your python project from scratch using pyenv, poetry and docker.
 
 ## 1 - Install pyenv to manage various python versions:
 First install pyenv following
@@ -100,5 +100,85 @@ poetry env use $(pyenv which python)
 This command will create `virtualenv` where all dependencies will no longer be installed in your system but only in the directory `.venv`.
 
 ### Next add fastapi dependencies
+
+```bash
+poetry add flask
+```
+
+This will output
+```bash
+Using version ^0.115.8 for fastapi
+
+Updating dependencies
+Resolving dependencies... (1.5s)
+
+Package operations: 9 installs, 0 updates, 0 removals
+
+  - Installing idna (3.10)
+  - Installing sniffio (1.3.1)
+  - Installing typing-extensions (4.12.2)
+  - Installing annotated-types (0.7.0)
+  - Installing anyio (4.8.0)
+  - Installing pydantic-core (2.27.2)
+  - Installing pydantic (2.10.6)
+  - Installing starlette (0.45.3)
+  - Installing fastapi (0.115.8)
+
+Writing lock file
+```
+
+It is worth to notice that `pyproject.toml` will be updated by adding in the list of your dependencies `fastapi (>=0.115.8,<0.116.0)` that indicates that your project will be compatible with any version between  `0.115.8` and `<0.116.0`.
+
+Please notice also that a `poetry.lock` will be generated containing the exact version of all the install dependencies. For instance in this project the fastapi version installed is `0.115.8`.
+
+Remember:
+
+1 - `pyproject.toml` holds the list of your `requirements` and may cover many supported versions.
+
+2 - `poetry.lock` holds the exact version installed and used currently by the project.
+
+### Add uvicorn following the previous commands
+
+```
+poetry add uvicorn
+```
+
+## 3 - Create your fastapi project
+
+
+### Create main.py with a simple server
+Create your `main.py` containing the following lines:
+
+```python
+from fastapi import FastAPI
+import uvicorn
+
+app = FastAPI()
+
+
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
+
+@app.get("/products/{name}")
+def show_products(name: str):
+    return {"name": name}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", 
+                host="0.0.0.0", 
+                port=8000, 
+                reload=False, 
+                log_level="debug")
+```
+
+### Run your project
+
+Run always using poetry
+```bash
+poetry run python3 main.py
+```
+
+This will run your fastapi server a `REST API server`.
 
 
