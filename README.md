@@ -1,4 +1,4 @@
-# Creating your python project from scratch using pyenv, poetry and docker.
+# A simple template for pyenv, poetry and docker fast api server
 
 ## 1 - Install pyenv to manage various python versions:
 First install pyenv following
@@ -182,3 +182,24 @@ poetry run python3 main.py
 This will run your fastapi server a `REST API server`.
 
 
+## 4 - Dockerize your project
+
+### Install docker
+Install docker using https://docs.docker.com/engine/install/ubuntu/
+
+### Configure docker group to avoid always using sudo
+Follow https://docs.docker.com/engine/install/linux-postinstall/
+
+### Create your docker image
+Create Dockerfile [Dockerfile](Dockerfile).
+
+You may notice that we are using here two-stage building where the first `FROM` introduce the builder image that use poetry to generate the list of your requirements. The second `FROM` produce the final image which is lighter since it does not contain poetry.
+
+This technique is called `multi-stage builds` (See https://docs.docker.com/get-started/docker-concepts/building-images/multi-stage-builds/ for more details) and is a best practice in Docker when buidling images. 
+
+Remember, the smaller the image the better is.
+
+### Build your image
+```bash
+docker build . -t cute-server:1.0.0-alpha
+```
