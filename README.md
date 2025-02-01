@@ -203,3 +203,14 @@ Remember, the smaller the image the better is.
 ```bash
 docker build . -t cute-server:1.0.0-alpha
 ```
+
+### Add a simple docker compose
+Create a docker compose file [`docker-compose.yaml`](./docker-compose.yaml) that run your image and expose its port to 8000.
+
+### Run your docker compose
+```bash
+docker compose up
+```
+
+### Enjoy your server using its doc
+Go to [localhost:8000/docs](http://localhost:8000/docs).
