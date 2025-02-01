@@ -102,7 +102,7 @@ This command will create `virtualenv` where all dependencies will no longer be i
 ### Next add fastapi dependencies
 
 ```bash
-poetry add flask
+poetry add fastapi
 ```
 
 This will output
